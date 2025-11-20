@@ -14,6 +14,11 @@ export default function AidaCountdown() {
 
   useEffect(() => {
     audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.getVoices();
+    }
+    
     return () => audioContextRef.current?.close();
   }, []);
 
@@ -98,8 +103,21 @@ export default function AidaCountdown() {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'ru-RU';
       utterance.rate = 0.9;
-      utterance.pitch = 1;
+      utterance.pitch = 0.8;
       utterance.volume = 1;
+      
+      const voices = window.speechSynthesis.getVoices();
+      const maleVoice = voices.find(voice => 
+        voice.lang.startsWith('ru') && 
+        (voice.name.toLowerCase().includes('male') || 
+         voice.name.toLowerCase().includes('мужской') ||
+         voice.name.toLowerCase().includes('yuri') ||
+         voice.name.toLowerCase().includes('dmitry'))
+      );
+      
+      if (maleVoice) {
+        utterance.voice = maleVoice;
+      }
       
       utteranceRef.current = utterance;
       window.speechSynthesis.speak(utterance);
