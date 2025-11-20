@@ -7,7 +7,7 @@ type Phase = 'ready' | 'countdown' | 'diving' | 'finished';
 
 export default function AidaCountdown() {
   const [phase, setPhase] = useState<Phase>('ready');
-  const [countdown, setCountdown] = useState(60);
+  const [countdown, setCountdown] = useState(120);
   const [diveTime, setDiveTime] = useState(0);
   const audioContextRef = useRef<AudioContext | null>(null);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
@@ -30,11 +30,23 @@ export default function AidaCountdown() {
         setCountdown((prev) => {
           const next = prev - 1;
           
-          if (next === 30) {
-            speak('30 секунд');
+          if (next === 120) {
+            speak('Две минуты до старта');
+            playBeep(880);
+          } else if (next === 90) {
+            speak('Минута тридцать секунд до старта');
+            playBeep(880);
+          } else if (next === 60) {
+            speak('Одна минута до старта');
+            playBeep(880);
+          } else if (next === 30) {
+            speak('Тридцать секунд');
+            playBeep(880);
+          } else if (next === 20) {
+            speak('Двадцать');
             playBeep(880);
           } else if (next === 10) {
-            speak('10 секунд');
+            speak('Десять');
             playBeep(880);
           } else if (next <= 5 && next > 0) {
             speak(next.toString());
@@ -129,7 +141,7 @@ export default function AidaCountdown() {
     setTimeout(() => {
       speak('Судья готов');
       setPhase('countdown');
-      setCountdown(60);
+      setCountdown(120);
       setDiveTime(0);
     }, 2000);
   };
@@ -142,7 +154,7 @@ export default function AidaCountdown() {
   const reset = () => {
     window.speechSynthesis.cancel();
     setPhase('ready');
-    setCountdown(60);
+    setCountdown(120);
     setDiveTime(0);
   };
 
@@ -155,7 +167,8 @@ export default function AidaCountdown() {
   const getBackgroundColor = () => {
     if (phase === 'ready') return 'from-slate-800 to-slate-900';
     if (phase === 'countdown') {
-      if (countdown > 30) return 'from-emerald-600 to-emerald-800';
+      if (countdown > 60) return 'from-emerald-600 to-emerald-800';
+      if (countdown > 30) return 'from-blue-500 to-blue-700';
       if (countdown > 10) return 'from-yellow-500 to-yellow-700';
       return 'from-red-600 to-red-800';
     }
@@ -194,15 +207,16 @@ export default function AidaCountdown() {
             {phase === 'countdown' && (
               <div className="space-y-6">
                 <div className="text-white/60 text-2xl uppercase tracking-widest font-medium">
-                  Countdown to Start
+                  Обратный отсчёт
                 </div>
                 <div className="text-[12rem] font-bold text-white leading-none tracking-tight font-mono">
-                  {countdown}
+                  {formatTime(countdown)}
                 </div>
                 <div className="text-white/80 text-xl">
-                  {countdown > 30 && 'Prepare for dive'}
-                  {countdown <= 30 && countdown > 10 && '30 seconds warning'}
-                  {countdown <= 10 && countdown > 0 && 'Final countdown'}
+                  {countdown > 60 && 'Подготовка к погружению'}
+                  {countdown <= 60 && countdown > 30 && 'Одна минута до старта'}
+                  {countdown <= 30 && countdown > 10 && 'Тридцать секунд'}
+                  {countdown <= 10 && countdown > 0 && 'Финальный отсчёт'}
                 </div>
               </div>
             )}
@@ -210,14 +224,14 @@ export default function AidaCountdown() {
             {phase === 'diving' && (
               <div className="space-y-6">
                 <div className="text-white/60 text-2xl uppercase tracking-widest font-medium">
-                  Dive Time
+                  Время погружения
                 </div>
                 <div className="text-[10rem] font-bold text-white leading-none tracking-tight font-mono">
                   {formatTime(diveTime)}
                 </div>
                 <div className="flex items-center justify-center gap-3">
                   <div className="w-4 h-4 bg-red-500 rounded-full animate-pulse" />
-                  <div className="text-white/80 text-xl">Recording dive time...</div>
+                  <div className="text-white/80 text-xl">Запись времени...</div>
                 </div>
               </div>
             )}
