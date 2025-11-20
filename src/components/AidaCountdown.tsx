@@ -26,16 +26,16 @@ export default function AidaCountdown() {
           const next = prev - 1;
           
           if (next === 30) {
-            speak('30 seconds');
+            speak('30 секунд');
             playBeep(880);
           } else if (next === 10) {
-            speak('10 seconds');
+            speak('10 секунд');
             playBeep(880);
           } else if (next <= 5 && next > 0) {
             speak(next.toString());
             playBeep(1320);
           } else if (next === 0) {
-            speak('Start');
+            speak('Старт');
             playLongBeep();
             setPhase('diving');
             return 0;
@@ -96,7 +96,7 @@ export default function AidaCountdown() {
       window.speechSynthesis.cancel();
       
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US';
+      utterance.lang = 'ru-RU';
       utterance.rate = 0.9;
       utterance.pitch = 1;
       utterance.volume = 1;
@@ -107,9 +107,9 @@ export default function AidaCountdown() {
   };
 
   const startCountdown = () => {
-    speak('Athlete ready');
+    speak('Спортсмен готов');
     setTimeout(() => {
-      speak('Official top');
+      speak('Судья готов');
       setPhase('countdown');
       setCountdown(60);
       setDiveTime(0);
@@ -117,7 +117,7 @@ export default function AidaCountdown() {
   };
 
   const stopTimer = () => {
-    speak('Surface');
+    speak('На поверхности');
     setPhase('finished');
   };
 
